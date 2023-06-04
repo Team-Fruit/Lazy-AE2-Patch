@@ -3,9 +3,11 @@
   "package": "net.teamfruit.lazyae2patch.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinTileLevelMaintainer"
+    "MixinContainerTile",
+    "MixinInventoryRequest"
   ],
   "client": [
+    "MixinGuiLevelMaintainer"
   ],
   "minVersion": "0.8"
 }
