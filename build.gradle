@@ -1,15 +1,22 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "https://files.minecraftforge.net/maven" }
+        mavenCentral()
+        maven {
+            url = "https://maven.minecraftforge.net"
+        }
+        maven {
+            name = "sponge"
+            url = 'https://repo.spongepowered.org/maven'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-
+apply plugin: 'org.spongepowered.mixin'
 
 version = "1.0"
 group = "net.teamfruit.lazyae2patch" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -23,32 +30,34 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2847"
     runDir = "run"
-    
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "stable_39"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 repositories {
     mavenLocal()
-
+    maven {
+        name = "MixinBooster Maven"
+        url 'https://maven.cleanroommc.com'
+    }
     maven {
         name = "JEI Maven"
-        url "http://dvs1.progwml6.com/files/maven"
+        url "https://dvs1.progwml6.com/files/maven"
     }
 }
 
 dependencies {
-    compile files("appliedenergistics2-rv6-stable-7-extended_life-v50j.jar")
+    compile 'zone.rong:mixinbooter:7.1'
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+
+    compile files("libs/appliedenergistics2-rv6-stable-7-extended_life-v50j.jar")
     compile files("libs/libnine-1.12.2-1.2.1.jar")
     compile files("libs/lazy-ae2-1.12.2-1.1.26.jar")
-
     compile "mezz.jei:jei_1.12.2:4.16.1.302:api"
     runtime "mezz.jei:jei_1.12.2:4.16.1.302"
+}
+
+mixin {
+    add sourceSets.main, "mixin.${archivesBaseName}.refmap.json"
 }
 
 processResources {
@@ -59,11 +68,11 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
