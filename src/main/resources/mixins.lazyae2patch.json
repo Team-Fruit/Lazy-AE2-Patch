@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.teamfruit.lazyae2patch.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinTileLevelMaintainer"
+  ],
+  "client": [
+  ],
+  "minVersion": "0.8"
+}
