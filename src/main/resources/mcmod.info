@@ -1,16 +1,17 @@
 [
 {
   "modid": "lazyae2patch",
-  "name": "Lazy-AE2 Patch",
+  "name": "Lazy AE2 Patch",
   "description": "Some patches for Lazy AE2.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["sjcl"],
-  "credits": "Lazy-AE2 for phantamanta44",
+  "credits": "Lazy AE2 for phantamanta44",
   "logoFile": "",
   "screenshots": [],
+  "requiredMods":["threng"],
   "dependencies": []
 }
 ]
