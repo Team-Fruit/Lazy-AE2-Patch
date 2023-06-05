@@ -4,10 +4,14 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinContainerTile",
-    "MixinInventoryRequest"
+    "MixinInventoryRequest",
+    "MixinPacketInventoryAction"
   ],
   "client": [
     "MixinGuiLevelMaintainer"
   ],
+  "injectors": {
+    "defaultRequire": 1
+  },
   "minVersion": "0.8"
 }
