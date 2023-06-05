@@ -11,7 +11,7 @@
   "credits": "Lazy AE2 for phantamanta44",
   "logoFile": "",
   "screenshots": [],
-  "requiredMods":["threng"],
+  "requiredMods":["threng", "mixinbooter"],
   "dependencies": []
 }
 ]

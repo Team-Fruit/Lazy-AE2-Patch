@@ -18,9 +18,9 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'org.spongepowered.mixin'
 
-version = "1.0.0"
+version = "1.1.0"
 group = "net.teamfruit.lazyae2patch" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "lazyae2patch"
+archivesBaseName = "lazy-ae2-patch"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
@@ -30,7 +30,7 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2847"
     runDir = "run"
-    mappings = "stable_39"
+    mappings = "snapshot_20171003"
 }
 
 repositories {
@@ -57,7 +57,7 @@ dependencies {
 }
 
 mixin {
-    add sourceSets.main, "mixin.${archivesBaseName}.refmap.json"
+    add sourceSets.main, "mixin.lazyae2patch.refmap.json"
 }
 
 processResources {
