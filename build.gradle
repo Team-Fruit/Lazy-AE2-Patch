@@ -43,15 +43,19 @@ repositories {
         name = "JEI Maven"
         url "https://dvs1.progwml6.com/files/maven"
     }
+    maven {
+        name = "Curse Maven"
+        url "https://cursemaven.com"
+    }
 }
 
 dependencies {
     compile 'zone.rong:mixinbooter:7.1'
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 
-    compile files("libs/appliedenergistics2-rv6-stable-7-extended_life-v50j.jar")
-    compile files("libs/libnine-1.12.2-1.2.1.jar")
-    compile files("libs/lazy-ae2-1.12.2-1.1.26.jar")
+    compile "curse.maven:appliedenergistics2-rv6-stable-7-extended_life-570458:4553942"
+    compile "curse.maven:libnine-322344:3509087"
+    compile "curse.maven:lazy-ae2-322347:3254160"
     compile "mezz.jei:jei_1.12.2:4.16.1.302:api"
     runtime "mezz.jei:jei_1.12.2:4.16.1.302"
 }
