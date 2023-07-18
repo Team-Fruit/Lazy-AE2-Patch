@@ -22,7 +22,10 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    implementation rfg.deobf("curse.maven:appliedenergistics2-rv6-stable-7-extended_life-570458:4553942")
+    implementation rfg.deobf("curse.maven:appliedenergistics2-rv6-stable-7-extended_life-570458:4646658")
     implementation rfg.deobf("curse.maven:libnine-322344:3509087")
     implementation rfg.deobf("curse.maven:lazy-ae2-322347:3254160")
+
+    runtimeOnly rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848")
+    runtimeOnly "curse.maven:gregtech-ce-unofficial-557242:4644636"
 }
