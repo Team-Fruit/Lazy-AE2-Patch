@@ -2,6 +2,6 @@ package net.teamfruit.lazyae2patch;
 
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(modid =  Reference.MODID, name = Reference.NAME, version = Reference.VERSION)
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]")
 public class LazyAE2Patch {
 }
