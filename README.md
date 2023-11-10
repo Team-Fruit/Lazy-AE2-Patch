@@ -1,5 +1,8 @@
 # Lazy-AE2-Patch
 
+## Required mod
+- [MixinBooter](https://github.com/CleanroomMC/MixinBooter)
+
 ## License
 * Lazy-AE2-Patch
     - Copyright (c) 2023 TeamFruit
