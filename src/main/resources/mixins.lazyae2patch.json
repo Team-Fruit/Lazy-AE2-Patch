@@ -1,19 +1,19 @@
 {
-  "required": true,
   "package": "net.teamfruit.lazyae2patch.mixins",
+  "refmap": "mixins.lazyae2patch.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinPacketInventoryAction"
-  ],
-  "server": [
+    "MixinPacketInventoryAction",
+    "MixinContainerInterfaceTerminal",
+    "MixinTileBigAssemblerCore",
+    "MixinBlockBigAssembler"
   ],
   "client": [
     "MixinContainerTile",
     "MixinInventoryRequest",
     "MixinGuiLevelMaintainer"
   ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "minVersion": "0.8"
+  "server": []
 }
