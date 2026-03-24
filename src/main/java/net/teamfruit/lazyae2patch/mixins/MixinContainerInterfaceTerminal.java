@@ -241,12 +241,12 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
     @Unique
     private boolean lazyae2patch$maNeedsUpdate() {
-        if (this.grid == null) return false;
+        if (this.grid == null) return !lazyae2patch$maTrackers.isEmpty();
 
         final IActionHost host = this.getActionHost();
-        if (host == null) return false;
+        if (host == null) return !lazyae2patch$maTrackers.isEmpty();
         final IGridNode agn = host.getActionableNode();
-        if (agn == null || !agn.isActive()) return false;
+        if (agn == null || !agn.isActive()) return !lazyae2patch$maTrackers.isEmpty();
 
         int total = 0;
         for (final IGridNode gn : this.grid.getMachines(TileBigAssemblerCore.class)) {
