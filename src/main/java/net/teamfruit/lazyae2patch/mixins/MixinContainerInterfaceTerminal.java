@@ -1,6 +1,5 @@
 package net.teamfruit.lazyae2patch.mixins;
 
-import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionHost;
@@ -14,7 +13,6 @@ import appeng.util.inv.AdaptorItemHandler;
 import appeng.util.inv.WrapperCursorItemHandler;
 import appeng.util.inv.WrapperFilteredItemHandler;
 import appeng.util.inv.WrapperRangeItemHandler;
-import appeng.util.inv.filter.IAEItemFilter;
 import io.github.phantamanta44.threng.tile.TileBigAssemblerCore;
 import io.github.phantamanta44.threng.tile.TileBigAssemblerPatternStore;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,6 +22,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamfruit.lazyae2patch.MassAssemblerTracker;
+import net.teamfruit.lazyae2patch.PatternSlotFilter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -46,6 +45,9 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
     @Shadow(remap = false)
     private NBTTagCompound data;
+
+    @Shadow(remap = false)
+    private boolean isDifferent(ItemStack a, ItemStack b) { throw new AssertionError(); }
 
     private MixinContainerInterfaceTerminal() {
         super(null, null, null);
@@ -123,7 +125,7 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
         final IItemHandler theSlot = new WrapperFilteredItemHandler(
                 new WrapperRangeItemHandler(tracker.server, slot, slot + 1),
-                new LazyAE2PatternSlotFilter());
+                PatternSlotFilter.INSTANCE);
         final InventoryAdaptor interfaceSlot = new AdaptorItemHandler(theSlot);
 
         final IItemHandler interfaceHandler = tracker.server;
@@ -224,7 +226,7 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
                 if (!itemStack.isEmpty()) {
                     IItemHandler handler = new WrapperFilteredItemHandler(
                             new WrapperRangeItemHandler(tracker.server, 0, tracker.server.getSlots()),
-                            new LazyAE2PatternSlotFilter());
+                            PatternSlotFilter.INSTANCE);
                     playerSlot.putStack(ItemHandlerHelper.insertItem(handler, itemStack, false));
                 }
                 break;
@@ -261,7 +263,7 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
         for (final MassAssemblerTracker tracker : lazyae2patch$maTrackers.values()) {
             for (int x = 0; x < tracker.server.getSlots(); x++) {
-                if (tracker.isDifferent(x)) return true;
+                if (this.isDifferent(tracker.server.getStackInSlot(x), tracker.client.getStackInSlot(x))) return true;
             }
         }
 
@@ -294,16 +296,4 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
         data.setTag(name, tag);
     }
 
-    @Unique
-    private static class LazyAE2PatternSlotFilter implements IAEItemFilter {
-        @Override
-        public boolean allowExtract(IItemHandler inv, int slot, int amount) {
-            return true;
-        }
-
-        @Override
-        public boolean allowInsert(IItemHandler inv, int slot, ItemStack stack) {
-            return !stack.isEmpty() && stack.getItem() instanceof ICraftingPatternItem;
-        }
-    }
 }

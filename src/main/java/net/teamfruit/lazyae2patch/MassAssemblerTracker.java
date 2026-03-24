@@ -27,13 +27,10 @@ public class MassAssemblerTracker {
         this.id = autoBase--;
         this.server = store.getPatternInventory();
         this.client = new AppEngInternalInventory(null, this.server.getSlots());
-        // Highlight button points to the controller
         this.pos = core.getPos();
         this.dim = core.getWorld().provider.getDimension();
-        BlockPos corePos = core.getPos();
-        long coreSort = ((long) corePos.getZ() << 24) ^ ((long) corePos.getX() << 8) ^ corePos.getY();
+        long coreSort = ((long) pos.getZ() << 24) ^ ((long) pos.getX() << 8) ^ pos.getY();
         this.sortBy = (coreSort << 8) | storeIndex;
-        // Use custom name if set via Cutting Knife, otherwise use block translation key
         if (core instanceof ICustomNameObject && ((ICustomNameObject) core).hasCustomInventoryName()) {
             this.unlocalizedName = ((ICustomNameObject) core).getCustomInventoryName();
         } else {
@@ -42,19 +39,6 @@ public class MassAssemblerTracker {
             ItemStack storeStack = new ItemStack(storeBlock, 1, storeBlock.getMetaFromState(storeState));
             this.unlocalizedName = storeStack.getItem().getTranslationKey(storeStack);
         }
-        // 36 slots = 4 rows of 9, so numUpgrades = 3 (base 1 row + 3 extra rows)
         this.numUpgrades = 3;
-    }
-
-    public boolean isDifferent(int slot) {
-        ItemStack serverStack = server.getStackInSlot(slot);
-        ItemStack clientStack = client.getStackInSlot(slot);
-        if (serverStack.isEmpty() && clientStack.isEmpty()) {
-            return false;
-        }
-        if (serverStack.isEmpty() || clientStack.isEmpty()) {
-            return true;
-        }
-        return !ItemStack.areItemStacksEqual(serverStack, clientStack);
     }
 }

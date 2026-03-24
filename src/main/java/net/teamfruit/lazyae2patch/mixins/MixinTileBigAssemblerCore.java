@@ -2,16 +2,14 @@ package net.teamfruit.lazyae2patch.mixins;
 
 import appeng.helpers.ICustomNameObject;
 import io.github.phantamanta44.threng.tile.TileBigAssemblerCore;
+import io.github.phantamanta44.threng.tile.base.TileAENetworked;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TileBigAssemblerCore.class)
-public abstract class MixinTileBigAssemblerCore implements ICustomNameObject {
+public abstract class MixinTileBigAssemblerCore extends TileAENetworked implements ICustomNameObject {
 
     @Unique
     private String lazyae2patch$customName;
@@ -29,20 +27,23 @@ public abstract class MixinTileBigAssemblerCore implements ICustomNameObject {
     @Override
     public void setCustomName(String name) {
         lazyae2patch$customName = name;
+        ((TileEntity) (Object) this).markDirty();
     }
 
-    // Use both MCP and SRG names to work in dev and production environments
-    @Inject(method = {"writeToNBT", "func_189515_b"}, at = @At("TAIL"), remap = false)
-    private void lazyae2patch$onWriteNBT(NBTTagCompound data, CallbackInfoReturnable<NBTTagCompound> cir) {
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound = super.writeToNBT(compound);
         if (lazyae2patch$customName != null && !lazyae2patch$customName.isEmpty()) {
-            data.setString("customName", lazyae2patch$customName);
+            compound.setString("customName", lazyae2patch$customName);
         }
+        return compound;
     }
 
-    @Inject(method = {"readFromNBT", "func_145839_a"}, at = @At("TAIL"), remap = false)
-    private void lazyae2patch$onReadNBT(NBTTagCompound data, CallbackInfo ci) {
-        if (data.hasKey("customName")) {
-            lazyae2patch$customName = data.getString("customName");
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if (compound.hasKey("customName")) {
+            lazyae2patch$customName = compound.getString("customName");
         } else {
             lazyae2patch$customName = null;
         }
