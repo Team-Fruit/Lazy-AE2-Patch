@@ -254,7 +254,9 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final TileBigAssemblerCore core = (TileBigAssemblerCore) gn.getMachine();
             if (!core.isActive()) continue;
             for (final TileBigAssemblerPatternStore store : core.getPatternStores()) {
-                if (!lazyae2patch$maTrackers.containsKey(store)) return true;
+                final MassAssemblerTracker tracker = lazyae2patch$maTrackers.get(store);
+                if (tracker == null) return true;
+                if (!tracker.unlocalizedName.equals(MassAssemblerTracker.getDisplayName(store, core))) return true;
                 total++;
             }
         }
