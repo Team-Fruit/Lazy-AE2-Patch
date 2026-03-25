@@ -31,14 +31,18 @@ public class MassAssemblerTracker {
         this.dim = core.getWorld().provider.getDimension();
         long coreSort = ((long) pos.getZ() << 24) ^ ((long) pos.getX() << 8) ^ pos.getY();
         this.sortBy = (coreSort << 8) | storeIndex;
-        if (core instanceof ICustomNameObject && ((ICustomNameObject) core).hasCustomInventoryName()) {
-            this.unlocalizedName = ((ICustomNameObject) core).getCustomInventoryName();
-        } else {
-            IBlockState storeState = store.getWorld().getBlockState(store.getPos());
-            Block storeBlock = storeState.getBlock();
-            ItemStack storeStack = new ItemStack(storeBlock, 1, storeBlock.getMetaFromState(storeState));
-            this.unlocalizedName = storeStack.getItem().getTranslationKey(storeStack);
-        }
+        this.unlocalizedName = getDisplayName(store, core);
         this.numUpgrades = 3;
+    }
+
+    public static String getDisplayName(TileBigAssemblerPatternStore store, TileBigAssemblerCore core) {
+        if (core instanceof ICustomNameObject && ((ICustomNameObject) core).hasCustomInventoryName()) {
+            return ((ICustomNameObject) core).getCustomInventoryName();
+        }
+
+        IBlockState storeState = store.getWorld().getBlockState(store.getPos());
+        Block storeBlock = storeState.getBlock();
+        ItemStack storeStack = new ItemStack(storeBlock, 1, storeBlock.getMetaFromState(storeState));
+        return storeStack.getItem().getTranslationKey(storeStack);
     }
 }
