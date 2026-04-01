@@ -32,7 +32,7 @@ public class MassAssemblerTracker {
         long coreSort = ((long) pos.getZ() << 24) ^ ((long) pos.getX() << 8) ^ pos.getY();
         this.sortBy = (coreSort << 8) | storeIndex;
         this.unlocalizedName = getDisplayName(store, core);
-        this.numUpgrades = 3;
+        this.numUpgrades = Math.max(0, (this.server.getSlots() / 9) - 1);
     }
 
     public static String getDisplayName(TileBigAssemblerPatternStore store, TileBigAssemblerCore core) {

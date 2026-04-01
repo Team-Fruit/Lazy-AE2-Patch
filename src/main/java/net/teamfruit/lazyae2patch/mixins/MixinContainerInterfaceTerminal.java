@@ -95,6 +95,7 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final List<TileBigAssemblerPatternStore> stores = core.getPatternStores();
             for (int i = 0; i < stores.size(); i++) {
                 final TileBigAssemblerPatternStore store = stores.get(i);
+                if (store.getPatternInventory().getSlots() <= 0) continue;
                 final MassAssemblerTracker tracker = new MassAssemblerTracker(store, core, i);
                 lazyae2patch$maTrackers.put(store, tracker);
                 lazyae2patch$maById.put(tracker.id, tracker);
@@ -118,7 +119,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
     @Unique
     private void lazyae2patch$handleMaAction(EntityPlayerMP player, InventoryAction action, int slot, MassAssemblerTracker tracker) {
-        final ItemStack is = tracker.server.getStackInSlot(slot);
+        if (action != InventoryAction.PLACE_SINGLE && (slot < 0 || slot >= tracker.server.getSlots())) return;
+        final ItemStack is = action != InventoryAction.PLACE_SINGLE ? tracker.server.getStackInSlot(slot) : ItemStack.EMPTY;
         final boolean hasItemInHand = !player.inventory.getItemStack().isEmpty();
 
         final InventoryAdaptor playerHand = new AdaptorItemHandler(new WrapperCursorItemHandler(player.inventory));
@@ -254,6 +256,7 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final TileBigAssemblerCore core = (TileBigAssemblerCore) gn.getMachine();
             if (!core.isActive()) continue;
             for (final TileBigAssemblerPatternStore store : core.getPatternStores()) {
+                if (store.getPatternInventory().getSlots() <= 0) continue;
                 final MassAssemblerTracker tracker = lazyae2patch$maTrackers.get(store);
                 if (tracker == null) return true;
                 if (!tracker.unlocalizedName.equals(MassAssemblerTracker.getDisplayName(store, core))) return true;
