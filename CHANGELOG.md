@@ -1,11 +1,11 @@
-# 1.2.1
+# v1.2.1
 - Add validation to skip Mass Assemblers that have no pattern inventory slots
 - Fix upgrade slot calculation based on server slots instead of hardcoded value
 - Prevent tracking of invalid Mass Assembler configurations
 
 * * *
 
-# 1.2.0
+# v1.2.0
 
 ## Modular Assembler Support
 - Interface Terminal integration
