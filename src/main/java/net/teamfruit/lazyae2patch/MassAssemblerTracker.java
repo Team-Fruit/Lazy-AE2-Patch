@@ -32,6 +32,8 @@ public class MassAssemblerTracker {
         long coreSort = ((long) pos.getZ() << 24) ^ ((long) pos.getX() << 8) ^ pos.getY();
         this.sortBy = (coreSort << 8) | storeIndex;
         this.unlocalizedName = getDisplayName(store, core);
+        // Calculate numUpgrades from actual slot count instead of hardcoding.
+        // AE2 GUI renders 9 * (1 + numUpgrades) slots, so numUpgrades = (slots / 9) - 1.
         this.numUpgrades = Math.max(0, (this.server.getSlots() / 9) - 1);
     }
 

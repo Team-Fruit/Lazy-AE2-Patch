@@ -95,6 +95,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final List<TileBigAssemblerPatternStore> stores = core.getPatternStores();
             for (int i = 0; i < stores.size(); i++) {
                 final TileBigAssemblerPatternStore store = stores.get(i);
+                // Skip pattern stores with no slots to prevent client-side crash
+                // when GUI tries to render a 0-size inventory
                 if (store.getPatternInventory().getSlots() <= 0) continue;
                 final MassAssemblerTracker tracker = new MassAssemblerTracker(store, core, i);
                 lazyae2patch$maTrackers.put(store, tracker);
@@ -119,6 +121,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
     @Unique
     private void lazyae2patch$handleMaAction(EntityPlayerMP player, InventoryAction action, int slot, MassAssemblerTracker tracker) {
+        // Validate slot index for actions that use it as a tracker inventory index.
+        // PLACE_SINGLE uses slot as a player container index instead, so skip the check.
         if (action != InventoryAction.PLACE_SINGLE && (slot < 0 || slot >= tracker.server.getSlots())) return;
         final ItemStack is = action != InventoryAction.PLACE_SINGLE ? tracker.server.getStackInSlot(slot) : ItemStack.EMPTY;
         final boolean hasItemInHand = !player.inventory.getItemStack().isEmpty();
@@ -256,6 +260,7 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final TileBigAssemblerCore core = (TileBigAssemblerCore) gn.getMachine();
             if (!core.isActive()) continue;
             for (final TileBigAssemblerPatternStore store : core.getPatternStores()) {
+                // Skip 0-slot stores, consistent with regenList filtering
                 if (store.getPatternInventory().getSlots() <= 0) continue;
                 final MassAssemblerTracker tracker = lazyae2patch$maTrackers.get(store);
                 if (tracker == null) return true;
