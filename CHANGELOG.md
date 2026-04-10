@@ -1,7 +1,9 @@
 # v1.2.1
-- Add validation to skip Mass Assemblers that have no pattern inventory slots
 - Fix upgrade slot calculation based on server slots instead of hardcoded value
-- Prevent tracking of invalid Mass Assembler configurations
+- Add validation to skip Mass Assemblers that have no pattern inventory slots
+- Fix crash in Interface Terminal GUI when an inventory has 0 slots
+- Fix compatibility with CrazyAE (#7)
+  - Thanks to @Rumcajz23th for his support!!
 
 * * *
 

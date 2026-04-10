@@ -12,6 +12,8 @@ import net.minecraftforge.items.IItemHandler;
 
 public class MassAssemblerTracker {
 
+    // Counts down from Long.MAX_VALUE to avoid colliding with AE2's own interface IDs,
+    // which are assigned from small positive values.
     private static long autoBase = Long.MAX_VALUE;
 
     public final long id;

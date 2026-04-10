@@ -80,22 +80,18 @@ public class AppEngInternalInventoryTransformer implements IClassTransformer {
 
         InsnList insns = mn.instructions;
 
-        // if (slot < 0) return EMPTY
         insns.add(new VarInsnNode(ILOAD, 1));
         insns.add(new JumpInsnNode(IFLT, returnEmpty));
 
-        // if (slot >= this.getSlots()) return EMPTY
         insns.add(new VarInsnNode(ILOAD, 1));
         insns.add(new VarInsnNode(ALOAD, 0));
         insns.add(new MethodInsnNode(INVOKEVIRTUAL, TARGET_CLASS_INTERNAL, "getSlots", "()I", false));
         insns.add(new JumpInsnNode(IF_ICMPLT, callSuper));
 
-        // return ItemStack.EMPTY
         insns.add(returnEmpty);
         insns.add(new FieldInsnNode(GETSTATIC, ITEMSTACK_CLASS, emptyFieldName, ITEMSTACK_DESC));
         insns.add(new InsnNode(ARETURN));
 
-        // return super.getStackInSlot(slot)
         insns.add(callSuper);
         insns.add(new VarInsnNode(ALOAD, 0));
         insns.add(new VarInsnNode(ILOAD, 1));

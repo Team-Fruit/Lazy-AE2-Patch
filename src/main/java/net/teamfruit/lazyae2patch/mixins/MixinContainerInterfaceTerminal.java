@@ -60,8 +60,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
     private final Map<Long, MassAssemblerTracker> lazyae2patch$maById = new HashMap<>();
 
     /**
-     * Redirect Map.size() on diList to force a full regen when Mass Assembler state changes.
-     * This is the only Map.size() call in detectAndSendChanges, on the diList field.
+     * Intercepts the {@code Map.size()} call on {@code diList} inside {@code detectAndSendChanges}
+     * and returns {@code -1} when any Mass Assembler entry has changed, forcing a full regen.
      */
     @Redirect(method = "detectAndSendChanges",
             at = @At(value = "INVOKE", target = "Ljava/util/Map;size()I", remap = false))
@@ -73,7 +73,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
     }
 
     /**
-     * After regenList rebuilds all interface entries, also add Mass Assembler pattern store entries.
+     * Appends Mass Assembler pattern store entries to the interface list after
+     * {@code regenList} has rebuilt the standard interface entries.
      */
     @Inject(method = "regenList", at = @At("TAIL"), remap = false)
     private void lazyae2patch$onRegenList(NBTTagCompound data, CallbackInfo ci) {
@@ -107,7 +108,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
     }
 
     /**
-     * Handle slot interactions for Mass Assembler entries in the Interface Terminal.
+     * Intercepts {@code doAction} to handle slot interactions for Mass Assembler entries.
+     * Cancels the original action so AE2 does not attempt to process an unknown ID.
      */
     @Inject(method = "doAction", at = @At("HEAD"), cancellable = true, remap = false)
     private void lazyae2patch$onDoAction(EntityPlayerMP player, InventoryAction action, int slot, long id, CallbackInfo ci) {
@@ -291,6 +293,9 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             tag.setTag("pos", NBTUtil.createPosTag(tracker.pos));
             tag.setInteger("dim", tracker.dim);
             tag.setInteger("numUpgrades", tracker.numUpgrades);
+            // CrazyAE reads this field to determine ClientDCInternalInv size.
+            // Without it, CrazyAE creates a 0-slot inventory and crashes in drawFG.
+            tag.setInteger("patternsNum", tracker.server.getSlots());
         }
 
         for (int x = 0; x < length; x++) {
