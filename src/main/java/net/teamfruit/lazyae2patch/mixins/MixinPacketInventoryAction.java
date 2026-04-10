@@ -30,6 +30,11 @@ public abstract class MixinPacketInventoryAction extends AppEngPacket {
     @Shadow(remap = false)
     private IAEItemStack slotItem;
 
+    /**
+     * Handles {@code PLACE_JEI_GHOST_ITEM} actions for the Level Maintainer container.
+     * AE2's own handler ignores unknown containers, so this injection fills the gap by
+     * writing the dragged item into the target {@link SlotFake} on the server side.
+     */
     @Inject(method = "serverPacketData", at = @At("TAIL"), remap = false, locals = LocalCapture.CAPTURE_FAILHARD)
     public void onServerPacketData(INetworkInfo manager, AppEngPacket packet, EntityPlayer player, CallbackInfo ci, EntityPlayerMP sender) {
         if (this.action == InventoryAction.PLACE_JEI_GHOST_ITEM && sender.openContainer instanceof ContainerLevelMaintainer) {
