@@ -131,10 +131,17 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
         final InventoryAdaptor playerHand = new AdaptorItemHandler(new WrapperCursorItemHandler(player.inventory));
 
-        final IItemHandler theSlot = new WrapperFilteredItemHandler(
-                new WrapperRangeItemHandler(tracker.server, slot, slot + 1),
-                PatternSlotFilter.INSTANCE);
-        final InventoryAdaptor interfaceSlot = new AdaptorItemHandler(theSlot);
+        final IItemHandler theSlot;
+        final InventoryAdaptor interfaceSlot;
+        if (action != InventoryAction.PLACE_SINGLE) {
+            theSlot = new WrapperFilteredItemHandler(
+                    new WrapperRangeItemHandler(tracker.server, slot, slot + 1),
+                    PatternSlotFilter.INSTANCE);
+            interfaceSlot = new AdaptorItemHandler(theSlot);
+        } else {
+            theSlot = null;
+            interfaceSlot = null;
+        }
 
         final IItemHandler interfaceHandler = tracker.server;
 
