@@ -3,7 +3,7 @@
 - Add validation to skip Mass Assemblers that have no pattern inventory slots
 - Fix crash in Interface Terminal GUI when an inventory has 0 slots
 - Fix compatibility with CrazyAE (#7)
-  - Thanks to @Rumcajz23th for his support!!
+  - Thanks to @Rumcajz23th for their support!!
 
 * * *
 
