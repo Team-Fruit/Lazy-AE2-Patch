@@ -221,12 +221,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
                 break;
 
             case PLACE_SINGLE: {
-                final net.minecraft.inventory.Slot playerSlot;
-                try {
-                    playerSlot = this.inventorySlots.get(slot);
-                } catch (IndexOutOfBoundsException ignored) {
-                    return;
-                }
+                if (slot < 0 || slot >= this.inventorySlots.size()) return;
+                final net.minecraft.inventory.Slot playerSlot = this.inventorySlots.get(slot);
                 if (!(playerSlot instanceof appeng.container.slot.AppEngSlot)) return;
                 if (!((appeng.container.slot.AppEngSlot) playerSlot).isPlayerSide() || !playerSlot.getHasStack())
                     return;
