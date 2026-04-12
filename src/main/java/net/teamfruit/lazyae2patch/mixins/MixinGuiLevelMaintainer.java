@@ -45,6 +45,11 @@ public abstract class MixinGuiLevelMaintainer extends L9GuiContainer implements 
         return this.cont;
     }
 
+    /**
+     * Cancels text-box updates when the request's owning tile does not match the tile
+     * currently open in the GUI. Without this, AE2 network packets can trigger updates
+     * on a different Level Maintainer than the one the player has open.
+     */
     @Inject(method = "updateTextBoxes", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdateTextBoxes(TileLevelMaintainer.InventoryRequest requests, CallbackInfo ci) {
         TileLevelMaintainer guiTile = ((IMixinContainerTile<TileLevelMaintainer>) (Object) this.cont).getTile();

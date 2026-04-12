@@ -42,6 +42,8 @@ dependencies {
     implementation rfg.deobf("curse.maven:libnine-322344:3509087")
     implementation rfg.deobf("curse.maven:lazy-ae2-322347:3254160")
 
+    // implementation rfg.deobf("curse.maven:crazyae-1111042:6840104")
+
     runtimeOnly rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848")
     runtimeOnly rfg.deobf("curse.maven:gregtech-ce-unofficial-557242:5519022")
 }

@@ -60,8 +60,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
     private final Map<Long, MassAssemblerTracker> lazyae2patch$maById = new HashMap<>();
 
     /**
-     * Redirect Map.size() on diList to force a full regen when Mass Assembler state changes.
-     * This is the only Map.size() call in detectAndSendChanges, on the diList field.
+     * Intercepts the {@code Map.size()} call on {@code diList} inside {@code detectAndSendChanges}
+     * and returns {@code -1} when any Mass Assembler entry has changed, forcing a full regen.
      */
     @Redirect(method = "detectAndSendChanges",
             at = @At(value = "INVOKE", target = "Ljava/util/Map;size()I", remap = false))
@@ -73,7 +73,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
     }
 
     /**
-     * After regenList rebuilds all interface entries, also add Mass Assembler pattern store entries.
+     * Appends Mass Assembler pattern store entries to the interface list after
+     * {@code regenList} has rebuilt the standard interface entries.
      */
     @Inject(method = "regenList", at = @At("TAIL"), remap = false)
     private void lazyae2patch$onRegenList(NBTTagCompound data, CallbackInfo ci) {
@@ -95,6 +96,9 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final List<TileBigAssemblerPatternStore> stores = core.getPatternStores();
             for (int i = 0; i < stores.size(); i++) {
                 final TileBigAssemblerPatternStore store = stores.get(i);
+                // Skip pattern stores with no slots to prevent client-side crash
+                // when GUI tries to render a 0-size inventory
+                if (store.getPatternInventory().getSlots() <= 0) continue;
                 final MassAssemblerTracker tracker = new MassAssemblerTracker(store, core, i);
                 lazyae2patch$maTrackers.put(store, tracker);
                 lazyae2patch$maById.put(tracker.id, tracker);
@@ -104,7 +108,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
     }
 
     /**
-     * Handle slot interactions for Mass Assembler entries in the Interface Terminal.
+     * Intercepts {@code doAction} to handle slot interactions for Mass Assembler entries.
+     * Cancels the original action so AE2 does not attempt to process an unknown ID.
      */
     @Inject(method = "doAction", at = @At("HEAD"), cancellable = true, remap = false)
     private void lazyae2patch$onDoAction(EntityPlayerMP player, InventoryAction action, int slot, long id, CallbackInfo ci) {
@@ -118,7 +123,10 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
 
     @Unique
     private void lazyae2patch$handleMaAction(EntityPlayerMP player, InventoryAction action, int slot, MassAssemblerTracker tracker) {
-        final ItemStack is = tracker.server.getStackInSlot(slot);
+        // Validate slot index for actions that use it as a tracker inventory index.
+        // PLACE_SINGLE uses slot as a player container index instead, so skip the check.
+        if (action != InventoryAction.PLACE_SINGLE && (slot < 0 || slot >= tracker.server.getSlots())) return;
+        final ItemStack is = action != InventoryAction.PLACE_SINGLE ? tracker.server.getStackInSlot(slot) : ItemStack.EMPTY;
         final boolean hasItemInHand = !player.inventory.getItemStack().isEmpty();
 
         final InventoryAdaptor playerHand = new AdaptorItemHandler(new WrapperCursorItemHandler(player.inventory));
@@ -254,6 +262,8 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             final TileBigAssemblerCore core = (TileBigAssemblerCore) gn.getMachine();
             if (!core.isActive()) continue;
             for (final TileBigAssemblerPatternStore store : core.getPatternStores()) {
+                // Skip 0-slot stores, consistent with regenList filtering
+                if (store.getPatternInventory().getSlots() <= 0) continue;
                 final MassAssemblerTracker tracker = lazyae2patch$maTrackers.get(store);
                 if (tracker == null) return true;
                 if (!tracker.unlocalizedName.equals(MassAssemblerTracker.getDisplayName(store, core))) return true;
@@ -283,6 +293,9 @@ public abstract class MixinContainerInterfaceTerminal extends AEBaseContainer {
             tag.setTag("pos", NBTUtil.createPosTag(tracker.pos));
             tag.setInteger("dim", tracker.dim);
             tag.setInteger("numUpgrades", tracker.numUpgrades);
+            // CrazyAE reads this field to determine ClientDCInternalInv size.
+            // Without it, CrazyAE creates a 0-slot inventory and crashes in drawFG.
+            tag.setInteger("patternsNum", tracker.server.getSlots());
         }
 
         for (int x = 0; x < length; x++) {
