@@ -1,3 +1,8 @@
+# v1.2.2
+- Fix crash when Mass Assembler patterns exceed the 4×4 (16-slot) processing grid hardcoded in AE2-UEL
+
+* * *
+
 # v1.2.1
 - Fix upgrade slot calculation based on server slots instead of hardcoded value
 - Add validation to skip Mass Assemblers that have no pattern inventory slots
